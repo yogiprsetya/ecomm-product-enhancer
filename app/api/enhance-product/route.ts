@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   const smart =
     "Pastikan tidak ada return apapun selain hasil dari optimasi Anda (char), hindari pengulangan kata dan keyword spamming";
   const format = `hanya 1 baris dengan panjang maksimal ${
-    data.enhancer === "product_name" ? 90 : 250
+    data.enhancer === "product_name" ? 90 : 550
   } karakter.`;
 
   const response = await generateResponse(
