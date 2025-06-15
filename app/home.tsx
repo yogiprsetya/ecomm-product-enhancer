@@ -16,13 +16,22 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import { BrainCircuit } from "lucide-react";
+import { useGenAI } from "./useGenAI";
+import { If } from "~/components/ui/if";
+import { useCallback } from "react";
 
 export const Home = () => {
+  const gen = useGenAI();
+
   const form = useForm<Product>({
     resolver: zodResolver(ProductSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
   });
 
-  const { getFieldState } = form;
+  const { getFieldState, getValues, setValue } = form;
   const productName = getFieldState("name");
   const productDescription = getFieldState("description");
 
@@ -30,6 +39,20 @@ export const Home = () => {
   function onSubmit(values: Product) {
     form.reset();
   }
+
+  const setNameFromAI = useCallback(() => {
+    gen.enhanceTitle({
+      text: getValues("name"),
+      callback: (res) => setValue("name", res),
+    });
+  }, [gen, getValues, setValue]);
+
+  const setDescFromAI = useCallback(() => {
+    gen.enhanceDesc({
+      text: getValues("description"),
+      callback: (res) => setValue("description", res),
+    });
+  }, [gen, getValues, setValue]);
 
   return (
     <Card className="mt-6">
@@ -52,15 +75,30 @@ export const Home = () => {
 
                   <FormMessage />
 
-                  {productName.isDirty && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-[#a51a8f] absolute top-0 right-12"
-                    >
-                      <BrainCircuit color="#a51a8f" /> Tingkatkan dengan AI
-                    </Button>
-                  )}
+                  <If condition={productName.isDirty}>
+                    <div className="absolute top-0 right-12 flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        type="button"
+                        className="text-[#a51a8f]"
+                        onClick={setNameFromAI}
+                      >
+                        <BrainCircuit color="#a51a8f" /> Tingkatkan dengan AI
+                      </Button>
+
+                      <If condition={gen.titleEnhanced}>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          type="button"
+                          onClick={() => setValue("name", gen.titleEnhanced)}
+                        >
+                          Batal
+                        </Button>
+                      </If>
+                    </div>
+                  </If>
                 </FormItem>
               )}
             />
@@ -77,18 +115,35 @@ export const Home = () => {
 
                   <FormMessage />
 
-                  {productDescription.isDirty && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-[#a51a8f] absolute top-0 right-12"
-                    >
-                      <BrainCircuit color="#a51a8f" /> Tingkatkan dengan AI
-                    </Button>
-                  )}
+                  <If condition={productDescription.isDirty}>
+                    <div className="absolute top-0 right-12 flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        type="button"
+                        className="text-[#a51a8f]"
+                        onClick={setDescFromAI}
+                      >
+                        <BrainCircuit color="#a51a8f" /> Tingkatkan dengan AI
+                      </Button>
+
+                      <If condition={gen.descEnhanced}>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          type="button"
+                          onClick={() => setValue("name", gen.descEnhanced)}
+                        >
+                          Batal
+                        </Button>
+                      </If>
+                    </div>
+                  </If>
                 </FormItem>
               )}
             />
+
+            <Button className="mt-6">Simpan Produk</Button>
           </form>
         </Form>
       </CardContent>
