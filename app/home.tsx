@@ -25,7 +25,7 @@ export const ProductInfoForm: React.FC = () => {
   } = useService();
 
   return (
-    <div className="min-h-screen bg-gray-100 p-5">
+    <div className="min-h-screen">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Header */}
         <div className="bg-white p-5 border-b border-gray-200">
