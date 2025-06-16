@@ -1,5 +1,5 @@
-import { Home } from "./home";
+import { ProductInfoForm } from "./home";
 
 export default function HomePage() {
-  return <Home />;
+  return <ProductInfoForm />;
 }
